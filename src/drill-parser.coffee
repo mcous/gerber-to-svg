@@ -19,11 +19,11 @@ ZERO_BACKUP = 'L'
 PLACES_BACKUP = [ 2, 4 ]
 
 class DrillParser
-  constructor: ->
+  constructor: (places) ->
     # format for parsing coordinates, set by each file
     # excellon specifies which zeros to keep, but here we're going to treat it
     # as suppression to match gerber
-    @format = { zero: null, places: null }
+    @format = { zero: null, places: places ? null }
     # format of the drill file
     # I don't think this is ever going to be used but whatever
     @fmat = 'FMAT,2'
@@ -42,13 +42,13 @@ class DrillParser
     # inches command
     else if block is INCH_COMMAND[@fmat] or block.match /INCH/
       # set the format to 2.4
-      @format.places = [2, 4]
+      @format.places ?= [2, 4]
       # add set units object
       command.set = { units: 'in' }
     # metric command
     else if block is METRIC_COMMAND or block.match /METRIC/
       # set the format to 3.3
-      @format.places = [3, 3]
+      @format.places ?= [3, 3]
       # add set units command object
       command.set = { units: 'mm' }
     # absolute notation

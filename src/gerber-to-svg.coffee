@@ -25,13 +25,13 @@ module.exports = (gerber, options = {}) ->
   # or we got a string, so plot the thing
   # get the correct reader and parser
   if opts.drill
-    Reader = require './drill-reader'
-    Parser = require './drill-parser'
+    Reader = new (require './drill-reader') gerber
+    Parser = new (require './drill-parser') options.drillFormat
   else
-    Reader = require './gerber-reader'
-    Parser = require './gerber-parser'
+    Reader = new (require './gerber-reader') gerber
+    Parser = new (require './gerber-parser')
   # create the plotter
-  p = new Plotter gerber, Reader, Parser
+  p = new Plotter Reader, Parser
   # try to plot
   try
     xmlObject = p.plot()
