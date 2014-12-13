@@ -56,6 +56,7 @@ describe 'NC drill file parser', ->
   it 'should use 3.3 format for metric and 2.4 for inches', ->
     p.parseCommand 'INCH'
     p.format.places.should.eql [ 2, 4 ]
+    p.format.places = null
     p.parseCommand 'METRIC'
     p.format.places.should.eql [ 3, 3 ]
   describe 'tool definitions', ->
