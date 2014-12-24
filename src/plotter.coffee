@@ -18,9 +18,7 @@ TWO_PI = 2*Math.PI
 ASSUMED_UNITS = 'in'
 
 class Plotter
-  constructor: (file = '', Reader, Parser) ->
-    if Reader? then @reader = new Reader file
-    if Parser? then @parser = new Parser
+  constructor: (@reader, @parser) ->
     # tools and macros
     @macros = {}
     @tools = {}

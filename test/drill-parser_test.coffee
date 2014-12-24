@@ -59,8 +59,12 @@ describe 'NC drill file parser', ->
   it 'should use 3.3 format for metric and 2.4 for inches', ->
     p.parseCommand 'INCH'
     p.format.places.should.eql [ 2, 4 ]
+    p.format.places = null
     p.parseCommand 'METRIC'
     p.format.places.should.eql [ 3, 3 ]
+  it 'shoud use custom format if specified', ->
+    p = new Parser [ 4, 4 ]
+    p.format.places.should.eql [ 4, 4 ]
   describe 'tool definitions', ->
     beforeEach ->
       p.format.zero = 'L'
@@ -143,6 +147,10 @@ describe 'NC drill file parser', ->
       p.format.places = [3,3]
       p.parseCommand('X7.550Y14').should.eql {
         op: { do: 'flash', x: 7.55 * factor, y: .014 * factor }
+      }
+      p.format.places = [4,4]
+      p.parseCommand('X00398675Y00130275').should.eql {
+        op: { do: 'flash', x: 39.8675, y: 13.0275 }
       }
     it 'should recognize a tool change at the beginning or end of the line', ->
       p.format.zero = 'T'
