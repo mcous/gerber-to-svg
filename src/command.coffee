@@ -39,6 +39,7 @@ OPTIONS = [
   ['p', 'pretty', '     align SVG output prettily']
   ['d', 'drill', '      process files mathing this glob as NC drill files']
   ['f', 'format', "     override coordinate format with '[n_int,n_dec]'"]
+  ['m', 'merge', '      merge all tools, using the first width encountered']
   ['z', 'zero', "       override zero suppression with 'L' or 'T'"]
   ['u', 'units', "      override (without converting) units with 'mm' or 'in'"]
   ['n', 'notation', "   override absolute/incremental notation with 'A' or 'I'"]
@@ -48,7 +49,8 @@ OPTIONS = [
   ['h', 'help', '       display this help text']
 ]
 STRING_OPTS  = ['out', 'drill', 'format', 'zero', 'units', 'notation']
-BOOLEAN_OPTS = ['quiet', 'pretty', 'json', 'append-ext', 'version', 'help']
+BOOLEAN_OPTS = ['quiet', 'pretty', 'json', 'append-ext', 'version', 'help',
+                'merge']
 
 printOptions = ->
   console.log 'Options:'
@@ -147,6 +149,7 @@ run = ->
               zero: argv.zero
               units: argv.units
               notation: argv.notation
+              merge: argv.merge
             }
             write gerberToSvg(data, opts), file
           catch e
