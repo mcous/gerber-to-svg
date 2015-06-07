@@ -25,6 +25,7 @@ DEFAULT_OPTS = {
   # plotter options
   notation: null
   units: null
+  merge: false
 }
 
 module.exports = (file, options = {}) ->
@@ -49,9 +50,11 @@ module.exports = (file, options = {}) ->
     reader = new GerberReader file
     parser = new GerberParser parserOpts
   # create the plotter
-  plotterOpts = null
-  if opts.notation? or opts.units?
-    plotterOpts = {notation: opts.notation, units: opts.units}
+  plotterOpts = {
+    notation: opts.notation
+    units: opts.units
+    merge: opts.merge
+  }
   p = new Plotter reader, parser, plotterOpts
   # capture console.warn if necessary
   oldWarn = null

@@ -24,7 +24,8 @@ DEFAULT_OPTS = {
   places: null,
   zero: null,
   notation: null,
-  units: null
+  units: null,
+  merge: false
 };
 
 module.exports = function(file, options) {
@@ -64,13 +65,11 @@ module.exports = function(file, options) {
     reader = new GerberReader(file);
     parser = new GerberParser(parserOpts);
   }
-  plotterOpts = null;
-  if ((opts.notation != null) || (opts.units != null)) {
-    plotterOpts = {
-      notation: opts.notation,
-      units: opts.units
-    };
-  }
+  plotterOpts = {
+    notation: opts.notation,
+    units: opts.units,
+    merge: opts.merge
+  };
   p = new Plotter(reader, parser, plotterOpts);
   oldWarn = null;
   root = null;
@@ -1788,14 +1787,15 @@ ASSUMED_UNITS = 'in';
 
 Plotter = (function() {
   function Plotter(reader, parser, opts) {
-    var ref, ref1;
+    var ref, ref1, ref2;
     this.reader = reader;
     this.parser = parser;
     if (opts == null) {
       opts = {};
     }
     this.units = (ref = opts.units) != null ? ref : null;
-    this.notation = (ref1 = opts.notation) != null ? ref1 : null;
+    this.merge = (ref1 = opts.merge) != null ? ref1 : false;
+    this.notation = (ref2 = opts.notation) != null ? ref2 : null;
     this.macros = {};
     this.tools = {};
     this.currentTool = '';
@@ -1892,21 +1892,23 @@ Plotter = (function() {
         };
       }
     };
-    return this.changeTool(code);
+    return this.currentTool = code;
   };
 
   Plotter.prototype.changeTool = function(code) {
     var ref;
-    this.finishPath();
-    if (this.region) {
-      throw new Error('cannot change tool when in region mode');
-    }
-    if (this.tools[code] == null) {
-      if (!((ref = this.parser) != null ? ref.fmat : void 0)) {
-        throw new Error("tool " + code + " is not defined");
+    if (!this.merge) {
+      this.finishPath();
+      if (this.region) {
+        throw new Error('cannot change tool when in region mode');
       }
-    } else {
-      return this.currentTool = code;
+      if (this.tools[code] == null) {
+        if (!((ref = this.parser) != null ? ref.fmat : void 0)) {
+          throw new Error("tool " + code + " is not defined");
+        }
+      } else {
+        return this.currentTool = code;
+      }
     }
   };
 

@@ -22,6 +22,7 @@ class Plotter
     # parse options object
     # options can be used for units and notation
     @units = opts.units ? null
+    @merge = opts.merge ? false
     @notation = opts.notation ? null
     # tools and macros
     @macros = {}
@@ -80,21 +81,22 @@ class Plotter
       }
     }
     # set the current tool to the one just defined
-    @changeTool code
+    @currentTool = code
     # since this was a tool change, finish the path
 
   # change the tool
   changeTool: (code) ->
+    if not @merge
     # finish any in progress path
-    @finishPath()
-    # throw an error if in region mode or if tool does not exist
-    if @region then throw new Error 'cannot change tool when in region mode'
-    # throw if tool doesn't exist if it's a gerber. if it's a drill, just
-    # let it slide
-    unless @tools[code]?
-      unless @parser?.fmat then throw new Error "tool #{code} is not defined"
-    # change the tool if it exists
-    else @currentTool = code
+      @finishPath()
+      # throw an error if in region mode or if tool does not exist
+      if @region then throw new Error 'cannot change tool when in region mode'
+      # throw if tool doesn't exist if it's a gerber. if it's a drill, just
+      # let it slide
+      unless @tools[code]?
+        unless @parser?.fmat then throw new Error "tool #{code} is not defined"
+      # change the tool if it exists
+      else @currentTool = code
 
   # handle a command that comes in from the parser
   command: (c) ->
